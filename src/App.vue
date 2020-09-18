@@ -1,28 +1,50 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img id="logo" class="navbar-brand" alt="Avis Resto logo" src="./assets/Logo.png">
+  <div id="alignement"> 
+    <contenu></contenu>
+   
+
+  </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import Contenu from './components/Contenu'
+
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    'contenu': Contenu,
+    
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+#alignement{
+     display: flex;
+      margin-top: -35px;
+}
+#logo{
+  width:330px;
+  text-align: left !important;
+  margin: 12px;
+  margin-bottom: 40px;
+
+}
+
+
+ #googleMap {
+    width: 100%;
+    height: 1000px; 
+    background-color: white;
+     margin:2%;
+} 
+p{
+  margin-bottom: 0rem
 }
 </style>

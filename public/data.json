@@ -1,0 +1,114 @@
+[
+    {
+        "restaurantName": "Bronco",
+        "address": "39 rue des Petites Écuries, 75010 Paris",
+        "lat": 48.8737815,
+        "long": 2.3501649,
+        "ratings": [
+            {
+                "stars": 4,
+                "comment": "Un excellent restaurant, j'y reviendrai ! Par contre il vaut mieux aimer la viande."
+            },
+            {
+                "stars": 5,
+                "comment": "Tout simplement mon restaurant préféré !"
+            }
+            ,
+            {
+                "stars": 1,
+                "comment": "Bof"
+            }
+        ]
+    },
+    {
+        "restaurantName": "Babalou",
+        "address": "4 rue Lamarck, 75018 Paris",
+        "lat": 48.8865035,
+        "long": 2.3442197,
+        "ratings": [
+            {
+                "stars": 5,
+                "comment": "Une minuscule pizzeria délicieuse cachée juste à côté du Sacré choeur !"
+            },
+            {
+                "stars": 3,
+                "comment": "J'ai trouvé ça correct, sans plus"
+            }
+        ]
+    },
+    { 
+        "restaurantName": "L'Artiste",
+        "address": "153 rue de la Roquette, 75011 Paris",
+        "lat": 48.859674,
+        "long": 2.386524,
+        "ratings": [
+            {
+                "stars": 5,
+                "comment": "De super Burger"
+            },
+            {
+                "stars": 5,
+                "comment": "Wow quel bonheur!"
+            }
+        ]
+    },
+    { 
+        "restaurantName": "Q-Bar",
+        "address": "50 rue de la Folie-Regnault, 75011 Paris",
+        "lat": 48.859574,
+        "long": 2.386850,
+        "ratings": [
+            {
+                "stars": 5,
+                "comment": "De super Burger, j'ai kiffey"
+            },
+            {
+                "stars": 0,
+                "comment": "Trop nul"
+            }
+        ]
+    },
+    { 
+        "restaurantName": "Le Rey",
+        "address": "130 rue de la Roquette, 75011 Paris",
+        "lat": 48.857431,
+        "long": 2.379906,
+        "ratings": [
+            {
+                "stars": 5,
+                "comment": "Service 24/24, avec de la cuisine Auvergnate"
+            },
+            {
+                "stars": 0,
+                "comment": "Trop nul"
+            },{
+                "stars": 5,
+                "comment": "Service 24/24, avec de la cuisine Auvergnate"
+            },
+            {
+                "stars": 0,
+                "comment": "Trop nul"
+            }
+        ]
+    },
+    { 
+        "restaurantName": "Paristanbul",
+        "address": "154 rue du Chemin Vert, 75011 Paris",
+        "lat": 48.862745,
+        "long": 2.386990,
+        "ratings": [
+            {
+                "stars": 5,
+                "comment": "Bon!"
+            },
+            {
+                "stars": 4,
+                "comment": "Simple mais efficace"
+            },
+            {
+                "stars": 2,
+                "comment": "Ils m'ont pas mis de ketchup"
+            }
+        ]
+    }
+]
