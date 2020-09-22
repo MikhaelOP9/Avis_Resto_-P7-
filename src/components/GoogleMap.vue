@@ -16,14 +16,12 @@ export default  {
             const google = await googleMapsInit();
             // const geocoder = new google.maps.Geocoder();
             this.map = new google.maps.Map(this.$el, {
-                center: { lat: 48.8400, lng: 2.35 },
-                zoom: 13,
-                
-            });       
+            center: { lat: 48.8400, lng: 2.35 },
+            zoom: 13,
+            });      
         } catch (e) {
             console.error(e)
         }
-        
     }
 }
 </script>

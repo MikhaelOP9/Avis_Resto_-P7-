@@ -9,51 +9,21 @@
       })
     ">
       <b>{{ name }}</b>
-      <br />
+      <br/>
       {{ address }}
       <p>
         <i>{{ nbAvis }} Avis</i>
       </p>
-      <!-- nombre d'avis : (computed qui retourne length de this.restaurant.ratings) + creer
-      une nouvelle modale qui affiche les détails réstau avec avis + bouton laisser un avis-->
+      
       <star-rating v-bind:star-size="25" :show-rating="false" :read-only="true" :rating="rate"></star-rating>
       <button
         type="button"
         class="btn btn-primary mt-3"
-        data-toggle="modal"
-        data-target="#exampleModal"
+        @click.prevent.stop="$emit('laisserAvis', {
+          modalRate_name: name,
+          modalRate_address: address,
+        })"
       >Laissez votre avis</button>
-      <div
-        class="modal fade"
-        id="exampleModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel"></h5>
-              <star-rating v-bind:star-size="25"></star-rating>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text">Laissez votre avis</span>
-              </div>
-              <textarea class="form-control" aria-label="With textarea"></textarea>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-              <button type="button" class="btn btn-primary">Enregistrer</button>
-            </div>
-          </div>
-        </div>
-      </div>
-     
     </div>
   </div>
 </template>
@@ -106,8 +76,7 @@ export default {
   cursor: pointer;
   margin-bottom: 20px;
 }
-.mt-5,
-.my-5 {
+.mt-5, .my-5 {
   margin-top: 1rem !important;
   padding-right: 100px;
 }
