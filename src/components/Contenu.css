@@ -1,12 +1,8 @@
-#alignement{
+#alignement {
     margin-top: 0px !important;
-    
-  
   }
-  #alignRow{
-    /* margin-right: 200px; */
-    min-width: 400px;
-    
-    margin-right: 22px;
-    
-  }
+#alignRow {
+  /* margin-right: 200px; */
+  min-width: 400px;
+  margin-right: 22px;
+}

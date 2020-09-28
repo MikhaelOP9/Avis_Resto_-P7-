@@ -1,21 +1,33 @@
 <template>
   <div
-    class="modal fade"
     id="exampleModal"
-    tabindex="-1"
+    class="modal show"
     role="dialog"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
   >
-    <div class="modal-dialog" role="document">
+    <div
+      class="modal-dialog"
+      role="document"
+    >
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">
+          <h5
+            id="exampleModalLabel"
+            class="modal-title"
+          >
             <b>{{ name }}</b>
             {{ address }}
           </h5>
-          <star-rating v-bind:star-size="25"></star-rating>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <star-rating
+            v-model="stars"
+            :star-size="25"
+          />
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            @click="$emit('close-send-rate')"
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -23,11 +35,30 @@
           <div class="input-group-prepend">
             <span class="input-group-text">Laissez votre avis</span>
           </div>
-          <textarea v-model="txt" class="form-control" aria-label="With textarea" id="txt"></textarea>
+          <textarea
+            id="txt"
+            v-model="comment"
+            class="form-control"
+            aria-label="With textarea"
+          />
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-          <button type="button" class="btn btn-primary" v-on:click='avisLaisse'>Enregistrer</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal"
+            @click="$emit('close-send-rate')"
+          >
+            Fermer
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-dismiss="modal"
+            @click="avisLaisse"
+          >
+            Enregistrer
+          </button>
         </div>
       </div>
     </div>
@@ -35,21 +66,12 @@
 </template>
 
 <script>
-    import starRating from "vue-star-rating";
-    import $ from "jquery";
+import starRating from 'vue-star-rating';
 
 export default {
-  name: "laisserAvis",
-  data(){
-    return {
-      txt:""
-    }
-  },
-  methods:{
-    avisLaisse(){
-      console.log("test")
-      this.$emit('avisLaisse', this.txt)
-    }
+  name: 'LaisserAvis',
+  components: {
+    starRating,
   },
   props: {
     name: {
@@ -60,16 +82,32 @@ export default {
       type: String,
       required: true,
     },
+    index: {
+      type: Number,
+      required: true,
+    },
   },
-  components: {
-    starRating,
+  data() {
+    return {
+      comment: '',
+      stars: 0,
+    };
   },
-  mounted() {
-    $("#exampleModal").modal("show");
-    $("#exampleModal").on("hide.bs.modal", () => {
-      this.$emit("closeSendRate");
-    });
+  methods: {
+    avisLaisse() {
+      this.$emit('avis-laisse', {
+        comment: this.comment,
+        stars: this.stars,
+        index: this.index,
+      });
+      this.$emit('close-send-rate');
+    },
   },
+
 };
-      </script>
-      <style></style>
+</script>
+<style>
+.modal{
+  display:block !important;
+}
+</style>

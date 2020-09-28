@@ -1,73 +1,72 @@
 <template>
   <div class="container card">
     <restaurantRateListModal
+      v-if="modalInformations_display"
       :name="modalInformations_name"
       :address="modalInformations_address"
       :rates="modalInformations_rates"
       :rate="modalInformations_rate"
-      v-if="modalInformations_display"
-      v-on:closeRates="closeRestaurantRateListModal"
+      @close-rates="closeRestaurantRateListModal"
     />
     <div id="alignement">
-      <div class="row-md" id="alignRow">
+      <div
+        id="alignRow"
+        class="row-md"
+      >
         <restaurantCard
+          v-for="(restaurant, index) in restaurants"
           :key="restaurant.id"
-          v-for="restaurant in restaurants"
           :restaurant="restaurant"
+          :index="index"
           class="container"
-          v-on:openRates="openRestaurantRateListModal"
-          v-on:laisserAvis="openRestaurantSendRateModal"
+          @open-rates="openRestaurantRateListModal"
+          @laisser-avis="openRestaurantSendRateModal"
         />
       </div>
-      <restaurantSendRateModal 
+      <restaurantSendRateModal
+        v-if="modalRate_display"
         :name="modalRate_name"
         :address="modalRate_address"
-        v-if="modalRate_display" 
-        v-on:closeSendRate="closeRestaurantSendRateModal"
-        v-on:avisLaisse="avisLaisse($event)"
-      ></restaurantSendRateModal>
+        :index="modalRate_index"
+        @close-send-rate="closeRestaurantSendRateModal"
+        @avis-laisse="avisLaisse($event)"
+      />
 
-      <mapComponent></mapComponent>
+      <mapComponent @fetchedRestaurants="updateRestaurants" />
     </div>
   </div>
 </template>
 <script>
-import restaurantSendRateModal from "./LaisserAvis";
-import restaurantRateListModal from "./RestaurantRateListModal";
-import mapComponent from "./GoogleMap";
-import restaurantCard from "./RestaurantCard";
+import restaurantSendRateModal from './LaisserAvis.vue';
+import restaurantRateListModal from './RestaurantRateListModal.vue';
+import mapComponent from './GoogleMap.vue';
+import restaurantCard from './RestaurantCard.vue';
 
 export default {
+  name: 'Contenu',
   components: {
     restaurantCard,
     mapComponent,
     restaurantRateListModal,
     restaurantSendRateModal,
   },
-
-  name: "Contenu",
   data() {
     return {
       restaurants: [],
-      modalInformations_name: "",
-      modalInformations_address: "",
+      modalInformations_name: '',
+      modalInformations_address: '',
       modalInformations_rates: [],
       modalInformations_rate: 0,
       modalInformations_display: false,
-      modalRate_name: "",
-      modalRate_address: "",
+      modalRate_name: '',
+      modalRate_address: '',
+      modalRate_index: 0,
       modalRate_display: false,
     };
   },
-
+  created() {
+  },
   methods: {
-    getRestauData() {
-      fetch("data.json")
-        .then((response) => response.json())
-        .then((data) => (this.restaurants = data));
-      // console.log(this.restaurant.restaurantName)
-      // console.log(this.restaurants[1].restaurantName)
-    },
     openRestaurantRateListModal(data) {
       this.modalInformations_name = data.modalInformations_name;
       this.modalInformations_address = data.modalInformations_address;
@@ -81,18 +80,21 @@ export default {
     openRestaurantSendRateModal(data) {
       this.modalRate_name = data.modalRate_name;
       this.modalRate_address = data.modalRate_address;
+      this.modalRate_index = data.modalRate_index;
       this.modalRate_display = true;
     },
     closeRestaurantSendRateModal() {
       this.modalRate_display = false;
     },
-    avisLaisse(blahblah){
-      console.log(blahblah)
-    }
-  }, 
-    created() {
-    this.getRestauData();
+    avisLaisse(data) {
+      // console.log('avis enregistré : ', data);
+      this.restaurants[data.index].ratings.push(data);
+    },
+    updateRestaurants(data) {
+      this.restaurants = data;
+    },
   },
+
 };
 </script>
 

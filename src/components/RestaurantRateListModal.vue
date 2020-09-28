@@ -1,44 +1,70 @@
 <template>
   <div
-    class="modal fade"
     id="modalAvis"
+    class="modal show"
     tabindex="99"
     role="dialog"
     aria-labelledby="exampleModalLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog" role="document">
+    <div
+      class="modal-dialog"
+      role="document"
+    >
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">
+          <h5
+            id="exampleModalLabel"
+            class="modal-title"
+          >
             <b>{{ name }}</b>
             {{ address }}
           </h5>
-          <star-rating :star-size="25" :read-only="true" :show-rating="false" :rating="rate"></star-rating>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <star-rating
+            :star-size="25"
+            :read-only="true"
+            :show-rating="false"
+            :rating="rate"
+          />
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            @click="$emit('close-rates')"
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body" v-for="(note, index) in rates" :key="index"> 
-          {{note.comment}}  
-          <br> 
-          <star-rating :star-size="25" :read-only="true" :show-rating="false" :rating="note.stars"></star-rating>  
+        <div
+          v-for="(note, index) in rates"
+          :key="index"
+          class="modal-body"
+        >
+          {{ note.comment }}
+          <br>
+          <star-rating
+            :star-size="25"
+            :read-only="true"
+            :show-rating="false"
+            :rating="note.stars"
+          />
         </div>
-        <!-- <div class="modal-body" v-for="(note, index) in rates" :key="index"> {{note.stars}}</div> -->
-          <!-- //v-for qui boucle sur la variable rates (avis ou note in rates) à la place du lorem 
-          faire un $emit de l'avis qui est laissé, et dans contenu.vue faire un console.log dudit avis-->
-        <div class="modal-footer">
-        </div>
+        <div
+          class="modal-footer"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
-import starRating from "vue-star-rating";
-import $ from "jquery";
+import starRating from 'vue-star-rating';
 
 export default {
-  name: "restaurantRateListModal",
+  name: 'RestaurantRateListModal',
+  components: {
+    starRating,
+  },
   props: {
     name: {
       type: String,
@@ -57,22 +83,11 @@ export default {
       required: true,
     },
   },
-  components: {
-    starRating,
-  },
-  // beforeMount(){
-  //   this.name = this.$props.name;
-  //   this.address = this.$props.address;
-  //   this.rates = this.$props.rates;
-  //   this.rate = this.$props.rate;
-  // },
-  mounted() {
-    console.log(this.rates)
-    $("#modalAvis").modal("show");
-    $("#modalAvis").on("hide.bs.modal", () => {
-      this.$emit("closeRates");
-    });
-  },
+
 };
 </script>
-<style></style>
+<style>
+.modal {
+  display:block !important;
+}
+</style>
