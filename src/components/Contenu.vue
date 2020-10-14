@@ -88,7 +88,7 @@ export default {
     },
     avisLaisse(data) {
       // console.log('avis enregistré : ', data);
-      this.restaurants[data.index].ratings.push(data);
+      this.restaurants[data.index].reviews.push(data);
     },
     updateRestaurants(data) {
       this.restaurants = data;

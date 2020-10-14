@@ -41,13 +41,13 @@
           :key="index"
           class="modal-body"
         >
-          {{ note.comment }}
+          {{ note.text }}
           <br>
           <star-rating
             :star-size="25"
             :read-only="true"
             :show-rating="false"
-            :rating="note.stars"
+            :rating="note.rating"
           />
         </div>
         <div

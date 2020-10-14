@@ -4,7 +4,7 @@
       @click.prevent.stop="$emit('open-rates', {
         modalInformations_name: name,
         modalInformations_address: address,
-        modalInformations_rates: restaurant.ratings,
+        modalInformations_rates: restaurant.reviews,
         modalInformations_rate: rate,
       })
       "
@@ -19,7 +19,7 @@
         :star-size="25"
         :show-rating="false"
         :read-only="true"
-        :rating="rate"
+        :rating="moyStars"
       />
       <button
         type="button"
@@ -63,21 +63,22 @@ export default {
   },
   computed: {
     rate() {
-      const count = this.restaurant.ratings.length;
+      const count = this.restaurant.reviews.length;
       let total = 0;
-      this.restaurant.ratings.forEach((element) => {
+      this.restaurant.reviews.forEach((element) => {
         total += element.stars;
       });
       return total / count;
     },
     nbAvis() {
-      const count = this.restaurant.ratings.length;
+      const count = this.restaurant.reviews.length;
       return count;
     },
   },
   created() {
-    this.name = this.restaurant.restaurantName;
-    this.address = this.restaurant.address;
+    this.name = this.restaurant.name;
+    this.address = `${this.restaurant.address_components[0].long_name} ${this.restaurant.address_components[1].long_name}`;
+    this.moyStars = this.restaurant.rating;
   },
   methods: {},
 };
