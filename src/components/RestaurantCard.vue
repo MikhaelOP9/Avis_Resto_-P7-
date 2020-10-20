@@ -19,7 +19,7 @@
         :star-size="25"
         :show-rating="false"
         :read-only="true"
-        :rating="moyStars"
+        :rating="rating"
       />
       <button
         type="button"
@@ -58,7 +58,7 @@ export default {
     return {
       name: '',
       address: '',
-      moyStars: '',
+      rating: '',
     };
   },
   computed: {
@@ -78,7 +78,7 @@ export default {
   created() {
     this.name = this.restaurant.name;
     this.address = `${this.restaurant.address_components[0].long_name} ${this.restaurant.address_components[1].long_name}`;
-    this.moyStars = this.restaurant.rating;
+    this.rating = this.restaurant.rating;
   },
   methods: {},
 };

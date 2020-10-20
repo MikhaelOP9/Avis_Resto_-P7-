@@ -31,8 +31,17 @@
         @close-send-rate="closeRestaurantSendRateModal"
         @avis-laisse="avisLaisse($event)"
       />
-
-      <mapComponent @fetchedRestaurants="updateRestaurants" />
+      <mapComponent @fetchedRestaurant="updateRestaurant" />
+      <modale
+        :revele="revele"
+        :toggle-modale="toggleModale"
+      />
+      <div
+        class="btn btn-success"
+        @click="toggleModale"
+      >
+        ajoutez un resto!
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +50,7 @@ import restaurantSendRateModal from './LaisserAvis.vue';
 import restaurantRateListModal from './RestaurantRateListModal.vue';
 import mapComponent from './GoogleMap.vue';
 import restaurantCard from './RestaurantCard.vue';
+import modale from './NouvoRestoModal.vue';
 
 export default {
   name: 'Contenu',
@@ -49,6 +59,7 @@ export default {
     mapComponent,
     restaurantRateListModal,
     restaurantSendRateModal,
+    modale,
   },
   data() {
     return {
@@ -62,9 +73,8 @@ export default {
       modalRate_address: '',
       modalRate_index: 0,
       modalRate_display: false,
+      revele: false,
     };
-  },
-  created() {
   },
   methods: {
     openRestaurantRateListModal(data) {
@@ -87,11 +97,16 @@ export default {
       this.modalRate_display = false;
     },
     avisLaisse(data) {
-      // console.log('avis enregistré : ', data);
-      this.restaurants[data.index].reviews.push(data);
+      this.restaurants[data.index].reviews.push({
+        text: data.comment,
+        rating: data.stars,
+      });
     },
-    updateRestaurants(data) {
-      this.restaurants = data;
+    updateRestaurant(data) {
+      this.restaurants.push(data);
+    },
+    toggleModale() {
+      this.revele = !this.revele;
     },
   },
 

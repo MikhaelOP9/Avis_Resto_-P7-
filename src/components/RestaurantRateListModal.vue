@@ -24,7 +24,7 @@
             :star-size="25"
             :read-only="true"
             :show-rating="false"
-            :rating="rate"
+            :rating="rating"
           />
           <button
             type="button"
@@ -83,11 +83,10 @@ export default {
       required: true,
     },
   },
-
 };
 </script>
 <style>
 .modal {
-  display:block !important;
+  display: block !important;
 }
 </style>

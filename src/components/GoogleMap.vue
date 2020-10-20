@@ -1,5 +1,7 @@
 <template>
-  <div id="map" />
+  <div
+    id="map"
+  />
 </template>
 
 <script>
@@ -13,20 +15,20 @@ export default {
       infoWindow: null,
       places: null,
       restaurants: [],
-      lat: 0,
-      lng: 0,
+      pos: {
+        lat: 0,
+        lng: 0,
+      },
+      revele: false,
     });
   },
   watch: {
-    restaurants(restaurants) {
-      this.registerPlaces(restaurants);
+    pos: {
+      handler() {
+        this.updateRestaurants();
+      },
+      deep: true,
     },
-    lat() {
-      this.updateRestaurants();
-    },
-    // lng() {
-    //   this.updateRestaurants();
-    // },
   },
   async mounted() {
     try {
@@ -36,22 +38,30 @@ export default {
         center: { lat: 48.866667, lng: 2.333333 },
         zoom: 16,
       });
+      this.map.addListener('click', (e) => {
+        console.log('yeah', e.latLng);
+        this.placeMarkerAndPanTo(e.latLng, this.map);
+      });
+
       this.infoWindow = new this.google.maps.InfoWindow();
 
       // Try HTML5 geolocation.
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          this.lat = position.coords.latitude;
-          this.lng = position.coords.longitude;
+          this.pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
           this.infoWindow.setPosition({
-            lat: this.lat,
-            lng: this.lng,
+            lat: this.pos.lat,
+            lng: this.pos.lng,
           });
           this.infoWindow.setContent('Position trouvée.');
           this.infoWindow.open(this.map);
           this.map.setCenter({
-            lat: this.lat,
-            lng: this.lng,
+            lat: this.pos.lat,
+            lng: this.pos.lng,
           });
         }, () => {
           this.handleLocationError(true, this.infoWindow, this.map.getCenter());
@@ -69,46 +79,80 @@ export default {
         : 'Erreur: votre navigateur ne supporte pas la geolocalisation.');
       this.infoWindow.open(this.map);
     },
-    updateRestaurants() {
-      this.places = new this.google.maps.places.PlacesService(document.createElement('div'));
-      this.places.nearbySearch({
-        location: {
-          lat: this.lat,
-          lng: this.lng,
-        },
-        radius: 500,
-        type: 'restaurant',
-      }, (data) => {
-        data.forEach((restaurant, index) => {
-          window.setTimeout(() => {
-            this.places.getDetails({
-              placeId: restaurant.place_id,
-              // fields: ['rating', 'review'],
-            }, (restaurantDetails) => {
-              this.restaurants.push({
-                ...restaurant,
-                ...restaurantDetails,
-              });
-            });
-          }, 1000 * index);
+    getRestaurantDetails(restaurantId) {
+      return new Promise((resolve) => {
+        this.places.getDetails({
+          placeId: restaurantId,
+          // fields: ['rating', 'review'],
+        }, (restaurantDetails) => {
+          resolve(restaurantDetails);
         });
       });
     },
-    registerPlaces(data) {
-      console.log('data', data);
-      data.forEach((restaurant, index) => {
-        if (this.restaurants[index].markerCreated) return;
-        this.restaurants[index].markerCreated = true;
-        const coords = restaurant.geometry.location;
-        // eslint-disable-next-line
-        const position = new this.google.maps.LatLng(coords[1], coords[0]);
-        const marker = new this.google.maps.Marker({
-          position,
-          map: this.map,
-        });
-        console.log('marker', marker, 'position', position);
+    delayGetRestaurantDetails() {
+      return new Promise((resolve) => {
+        window.setTimeout(resolve, 1000);
       });
-      this.$emit('fetchedRestaurants', data);
+    },
+    updateRestaurants() {
+      if (!this.places) {
+        this.places = new this.google.maps.places.PlacesService(this.map);
+      }
+      this.places.nearbySearch({
+        location: {
+          lat: this.pos.lat,
+          lng: this.pos.lng,
+        },
+        radius: 250,
+        type: 'restaurant',
+      }, async (data) => {
+        for (let i = 0; i < data.length; i += 1) {
+          const restaurant = data[i];
+          console.log(restaurant.name);
+          console.log(JSON.stringify(this.restaurants));
+          console.log(JSON.stringify(this.restaurants).indexOf(restaurant.name));
+          if (JSON.stringify(this.restaurants).indexOf(restaurant.name) === -1) {
+            // eslint-disable-next-line
+            await this.delayGetRestaurantDetails();
+            // eslint-disable-next-line
+            const restaurantDetails = await this.getRestaurantDetails(restaurant.place_id);
+            this.restaurants.push({
+              ...restaurant,
+              ...restaurantDetails,
+            });
+            this.registerPlace({
+              ...restaurant,
+              ...restaurantDetails,
+            });
+          }
+        }
+      });
+    },
+    registerPlace(restaurant) {
+      const coords = restaurant.geometry.location;
+      // eslint-disable-next-line
+      const marker = new this.google.maps.Marker({
+        position: {
+          lat: coords.lat(),
+          lng: coords.lng(),
+        },
+        map: this.map,
+        title: restaurant.name,
+      });
+      this.$emit('fetchedRestaurant', restaurant);
+    },
+    placeMarkerAndPanTo(latLng, map) {
+      console.log('yeah2', latLng, map);
+      this.toggleModale();
+      map.panTo(latLng);
+      return new this.google.maps.Marker({
+        position: latLng,
+        map,
+      });
+    },
+    toggleModale() {
+      console.log('yeah3', this.revele);
+      this.revele = !this.revele;
     },
   },
 };
