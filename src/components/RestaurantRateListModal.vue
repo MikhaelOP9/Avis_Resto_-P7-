@@ -22,8 +22,8 @@
           </h5>
           <star-rating
             :star-size="25"
-            :read-only="true"
             :show-rating="false"
+            :read-only="true"
             :rating="rating"
           />
           <button
@@ -36,6 +36,10 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+        <img
+          :src="'https://maps.googleapis.com/maps/api/streetview?size=1920x1080&location=${lat},${lng}&key=AIzaSyDfFBkQLiNONnJ4y_safmg4m1XQfHf6Uqo'"
+          alt="Street view"
+        >
         <div
           v-for="(note, index) in rates"
           :key="index"
@@ -78,9 +82,15 @@ export default {
       type: Array,
       required: true,
     },
-    rate: {
-      type: Number,
-      required: true,
+  },
+  computed: {
+    rating() {
+      const count = this.rates.length;
+      let total = 0;
+      this.rates.forEach((element) => {
+        total += element.rating;
+      });
+      return total / count;
     },
   },
 };

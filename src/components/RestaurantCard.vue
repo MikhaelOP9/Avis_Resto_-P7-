@@ -12,9 +12,6 @@
       <b>{{ name }}</b>
       <br>
       {{ address }}
-      <p>
-        <i>{{ nbAvis }} Avis</i>
-      </p>
       <star-rating
         :star-size="25"
         :show-rating="false"
@@ -69,10 +66,6 @@ export default {
         total += element.stars;
       });
       return total / count;
-    },
-    nbAvis() {
-      const count = this.restaurant.reviews.length;
-      return count;
     },
   },
   created() {

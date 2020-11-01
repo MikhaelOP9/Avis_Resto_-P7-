@@ -1,13 +1,25 @@
 <template>
-  <div
-    id="map"
-  />
+  <div>
+    <modale
+      v-if="modalNew_display"
+      :position="modalNew_position"
+      @close-send-nouvo-resto="closeAddNewRestaurantModal"
+      @nouvo-resto="addNewRestaurant($event)"
+    />
+    <div
+      id="map"
+    />
+  </div>
 </template>
 
 <script>
 import googleMapsInit from '../utils/GoogleMaps';
+import Modale from './NouvoRestoModal.vue';
 
 export default {
+  components: {
+    Modale,
+  },
   data() {
     return ({
       google: null,
@@ -19,7 +31,8 @@ export default {
         lat: 0,
         lng: 0,
       },
-      revele: false,
+      modalNew_display: false,
+      modalNew_position: null,
     });
   },
   watch: {
@@ -31,44 +44,44 @@ export default {
     },
   },
   async mounted() {
-    try {
-      this.google = await googleMapsInit();
-      // const geocoder = new google.maps.Geocoder();
-      this.map = new this.google.maps.Map(this.$el, {
-        center: { lat: 48.866667, lng: 2.333333 },
-        zoom: 16,
-      });
-      this.map.addListener('click', (e) => {
-        console.log('yeah', e.latLng);
-        this.placeMarkerAndPanTo(e.latLng, this.map);
-      });
+    this.google = await googleMapsInit();
+    // const geocoder = new google.maps.Geocoder();
+    const mapContainer = this.$el.querySelector('div#map');
+    this.map = new this.google.maps.Map(mapContainer, {
+      center: { lat: 48.866667, lng: 2.333333 },
+      zoom: 16,
+    });
+    this.map.addListener('click', (e) => {
+      this.placeMarkerAndPanTo(e.latLng);
+    });
 
-      this.infoWindow = new this.google.maps.InfoWindow();
+    this.infoWindow = new this.google.maps.InfoWindow();
 
-      // Try HTML5 geolocation.
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          this.pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
 
-          this.infoWindow.setPosition({
+        // eslint-disable-next-line
+        const marker = new this.google.maps.Marker({
+          position: {
             lat: this.pos.lat,
             lng: this.pos.lng,
-          });
-          this.infoWindow.setContent('Position trouvée.');
-          this.infoWindow.open(this.map);
-          this.map.setCenter({
-            lat: this.pos.lat,
-            lng: this.pos.lng,
-          });
-        }, () => {
-          this.handleLocationError(true, this.infoWindow, this.map.getCenter());
+          },
+          map: this.map,
+          title: 'position',
+          icon: '/userPosition1.png',
         });
-      }
-    } catch (e) {
-      // console.error(e);
+        this.map.setCenter({
+          lat: this.pos.lat,
+          lng: this.pos.lng,
+        });
+      }, () => {
+        this.handleLocationError(true, this.infoWindow, this.map.getCenter());
+      });
     }
   },
   methods: {
@@ -108,9 +121,6 @@ export default {
       }, async (data) => {
         for (let i = 0; i < data.length; i += 1) {
           const restaurant = data[i];
-          console.log(restaurant.name);
-          console.log(JSON.stringify(this.restaurants));
-          console.log(JSON.stringify(this.restaurants).indexOf(restaurant.name));
           if (JSON.stringify(this.restaurants).indexOf(restaurant.name) === -1) {
             // eslint-disable-next-line
             await this.delayGetRestaurantDetails();
@@ -141,18 +151,25 @@ export default {
       });
       this.$emit('fetchedRestaurant', restaurant);
     },
-    placeMarkerAndPanTo(latLng, map) {
-      console.log('yeah2', latLng, map);
-      this.toggleModale();
-      map.panTo(latLng);
-      return new this.google.maps.Marker({
-        position: latLng,
-        map,
-      });
+    placeMarkerAndPanTo(latLng) {
+      this.map.panTo(latLng);
+      // eslint-disable-next-line no-new
+      this.openAddNewRestaurantModal(latLng);
     },
-    toggleModale() {
-      console.log('yeah3', this.revele);
-      this.revele = !this.revele;
+    openAddNewRestaurantModal(position) {
+      this.modalNew_position = position;
+      this.modalNew_display = true;
+    },
+    closeAddNewRestaurantModal() {
+      this.modalNew_display = false;
+    },
+    addNewRestaurant(data) {
+      this.restaurants.push({
+        ...data,
+      });
+      this.registerPlace({
+        ...data,
+      });
     },
   },
 };
@@ -160,7 +177,8 @@ export default {
 
 <style scoped>
 #map {
-    width : 1000vw;
-    height: 1000px;
+    width : 100%;
+    height:1000px;
+    min-width:300px;
 }
 </style>

@@ -1,24 +1,26 @@
 <template>
-  <div class="container card">
+  <div class="container-fluid card row">
     <restaurantRateListModal
       v-if="modalInformations_display"
       :name="modalInformations_name"
       :address="modalInformations_address"
       :rates="modalInformations_rates"
-      :rate="modalInformations_rate"
       @close-rates="closeRestaurantRateListModal"
     />
-    <div id="alignement">
+    <div
+      id="alignement"
+      class="row-md"
+    >
       <div
         id="alignRow"
-        class="row-md"
       >
         <restaurantCard
           v-for="(restaurant, index) in restaurants"
+          id="restaurantCard"
           :key="restaurant.id"
           :restaurant="restaurant"
           :index="index"
-          class="container"
+          class="container col-sm-6 col-md-6 col-lg-6 col-xl-6"
           @open-rates="openRestaurantRateListModal"
           @laisser-avis="openRestaurantSendRateModal"
         />
@@ -31,17 +33,11 @@
         @close-send-rate="closeRestaurantSendRateModal"
         @avis-laisse="avisLaisse($event)"
       />
-      <mapComponent @fetchedRestaurant="updateRestaurant" />
-      <modale
-        :revele="revele"
-        :toggle-modale="toggleModale"
+      <mapComponent
+        id="map"
+        class="container col-sm-6 col-md-6 col-lg-12 col-xl-12"
+        @fetchedRestaurant="updateRestaurant"
       />
-      <div
-        class="btn btn-success"
-        @click="toggleModale"
-      >
-        ajoutez un resto!
-      </div>
     </div>
   </div>
 </template>
@@ -50,7 +46,6 @@ import restaurantSendRateModal from './LaisserAvis.vue';
 import restaurantRateListModal from './RestaurantRateListModal.vue';
 import mapComponent from './GoogleMap.vue';
 import restaurantCard from './RestaurantCard.vue';
-import modale from './NouvoRestoModal.vue';
 
 export default {
   name: 'Contenu',
@@ -59,7 +54,6 @@ export default {
     mapComponent,
     restaurantRateListModal,
     restaurantSendRateModal,
-    modale,
   },
   data() {
     return {
@@ -67,7 +61,6 @@ export default {
       modalInformations_name: '',
       modalInformations_address: '',
       modalInformations_rates: [],
-      modalInformations_rate: 0,
       modalInformations_display: false,
       modalRate_name: '',
       modalRate_address: '',
@@ -105,11 +98,7 @@ export default {
     updateRestaurant(data) {
       this.restaurants.push(data);
     },
-    toggleModale() {
-      this.revele = !this.revele;
-    },
   },
-
 };
 </script>
 

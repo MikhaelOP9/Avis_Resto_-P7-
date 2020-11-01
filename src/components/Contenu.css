@@ -2,7 +2,13 @@
     margin-top: 0px !important;
   }
 #alignRow {
-  /* margin-right: 200px; */
-  min-width: 400px;
-  margin-right: 22px;
+  margin-right: -270px;
+  min-width: 50%;
+
+}
+#map{
+  z-index:0;
+}
+#restaurantCard{
+  z-index:3;
 }
