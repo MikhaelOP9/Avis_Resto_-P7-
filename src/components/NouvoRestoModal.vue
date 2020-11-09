@@ -164,7 +164,6 @@ export default {
         ],
         reviews: [],
       };
-      console.log('nouvoResto', this.nom, this.address, restaurant);
       this.$emit('nouvo-resto', restaurant);
       this.$emit('close-send-nouvo-resto');
     },
@@ -172,13 +171,12 @@ export default {
       this.modalNew_display = true;
     },
     closeAddNewRestaurantModal() {
-      console.log('test2');
       this.modalNew_display = false;
     },
   },
 };
 </script>
-<style>
+<style scoped>
 .bloc-modale{
     position: fixed;
     top:0;

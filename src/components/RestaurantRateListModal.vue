@@ -8,6 +8,7 @@
     aria-hidden="true"
   >
     <div
+      id="RestaurantRateListModal"
       class="modal-dialog"
       role="document"
     >
@@ -37,7 +38,7 @@
           </button>
         </div>
         <img
-          :src="'https://maps.googleapis.com/maps/api/streetview?size=1920x1080&location=${lat},${lng}&key=AIzaSyDfFBkQLiNONnJ4y_safmg4m1XQfHf6Uqo'"
+          :src="`https://maps.googleapis.com/maps/api/streetview?size=300x300&location=${lat},${lng}&key=AIzaSyDfFBkQLiNONnJ4y_safmg4m1XQfHf6Uqo`"
           alt="Street view"
         >
         <div
@@ -82,6 +83,14 @@ export default {
       type: Array,
       required: true,
     },
+    lat: {
+      type: Number,
+      required: true,
+    },
+    lng: {
+      type: Number,
+      required: true,
+    },
   },
   computed: {
     rating() {
@@ -98,5 +107,10 @@ export default {
 <style>
 .modal {
   display: block !important;
+}
+#RestaurantRateListModal {
+    height: 500px;
+    overflow-y: scroll;
+    pointer-events: auto !important;
 }
 </style>

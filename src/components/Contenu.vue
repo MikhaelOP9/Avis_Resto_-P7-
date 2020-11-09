@@ -1,10 +1,19 @@
 <template>
-  <div class="container-fluid card row">
+  <div
+    id="cardGlobal"
+    class="container-fluid card row"
+  >
+    <filtre-resto
+      @filter-min-rate="setMinRate"
+      @filter-max-rate="setMaxRate"
+    />
     <restaurantRateListModal
       v-if="modalInformations_display"
       :name="modalInformations_name"
       :address="modalInformations_address"
       :rates="modalInformations_rates"
+      :lat="modalInformations_lat"
+      :lng="modalInformations_lng"
       @close-rates="closeRestaurantRateListModal"
     />
     <div
@@ -13,14 +22,15 @@
     >
       <div
         id="alignRow"
+        class="row-md"
       >
         <restaurantCard
-          v-for="(restaurant, index) in restaurants"
+          v-for="(restaurant, index) in filteredRestaurants"
           id="restaurantCard"
-          :key="restaurant.id"
+          :key="restaurant.place_id"
           :restaurant="restaurant"
           :index="index"
-          class="container col-sm-6 col-md-6 col-lg-6 col-xl-6"
+          class="container col-7"
           @open-rates="openRestaurantRateListModal"
           @laisser-avis="openRestaurantSendRateModal"
         />
@@ -35,7 +45,7 @@
       />
       <mapComponent
         id="map"
-        class="container col-sm-6 col-md-6 col-lg-12 col-xl-12"
+        class="container col-sm-12 col-md-12 col-lg-12 col-xl-12"
         @fetchedRestaurant="updateRestaurant"
       />
     </div>
@@ -46,6 +56,7 @@ import restaurantSendRateModal from './LaisserAvis.vue';
 import restaurantRateListModal from './RestaurantRateListModal.vue';
 import mapComponent from './GoogleMap.vue';
 import restaurantCard from './RestaurantCard.vue';
+import filtreResto from './FiltreResto.vue';
 
 export default {
   name: 'Contenu',
@@ -54,6 +65,7 @@ export default {
     mapComponent,
     restaurantRateListModal,
     restaurantSendRateModal,
+    filtreResto,
   },
   data() {
     return {
@@ -61,13 +73,39 @@ export default {
       modalInformations_name: '',
       modalInformations_address: '',
       modalInformations_rates: [],
+      modalInformations_lat: 0,
+      modalInformations_lng: 0,
       modalInformations_display: false,
       modalRate_name: '',
       modalRate_address: '',
       modalRate_index: 0,
       modalRate_display: false,
       revele: false,
+      filterMinRate: 0,
+      filterMaxRate: 5,
     };
+  },
+  computed: {
+    filteredRestaurants() {
+      return this.restaurants.filter((restaurant) => {
+      // filtrer ici en fonction des filtres sélectionnés
+        const rate = Math.ceil(restaurant.rating);
+        const isInMinRange = (rate >= this.filterMinRate);
+        const isInMaxRange = (rate <= this.filterMaxRate);
+        const isInBound = (isInMinRange && isInMaxRange);
+        if (isInBound) {
+          // console.log({
+          //   name: restaurant.name,
+          //   initial: restaurant.rating,
+          //   rate,
+          //   isInMinRange,
+          //   isInMaxRange,
+          //   isInBound,
+          // });
+        }
+        return isInBound;
+      });
+    },
   },
   methods: {
     openRestaurantRateListModal(data) {
@@ -75,6 +113,8 @@ export default {
       this.modalInformations_address = data.modalInformations_address;
       this.modalInformations_rates = data.modalInformations_rates;
       this.modalInformations_rate = data.modalInformations_rate;
+      this.modalInformations_lat = data.modalInformations_lat;
+      this.modalInformations_lng = data.modalInformations_lng;
       this.modalInformations_display = true;
     },
     closeRestaurantRateListModal() {
@@ -97,6 +137,12 @@ export default {
     },
     updateRestaurant(data) {
       this.restaurants.push(data);
+    },
+    setMinRate(minRate) {
+      this.filterMinRate = minRate;
+    },
+    setMaxRate(maxRate) {
+      this.filterMaxRate = maxRate;
     },
   },
 };

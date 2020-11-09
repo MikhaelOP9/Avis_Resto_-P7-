@@ -6,6 +6,8 @@
         modalInformations_address: address,
         modalInformations_rates: restaurant.reviews,
         modalInformations_rate: rate,
+        modalInformations_lat: restaurant.geometry.location.lat(),
+        modalInformations_lng: restaurant.geometry.location.lng(),
       })
       "
     >
@@ -20,7 +22,7 @@
       />
       <button
         type="button"
-        class="btn btn-primary mt-3"
+        class="btn btn-primary mt-2"
         @click.prevent.stop="$emit('laisser-avis', {
           modalRate_name: name,
           modalRate_address: address,
@@ -67,6 +69,11 @@ export default {
       });
       return total / count;
     },
+    // filteredRestaurants() {
+    //   return this.restaurants.filter((restaurant) => {
+    //   //filtrer ici en fonction des filtres sélectionnés
+    //   });
+    // },
   },
   created() {
     this.name = this.restaurant.name;
@@ -84,7 +91,7 @@ export default {
 }
 .mt-5, .my-5 {
   margin-top: 1rem !important;
-  padding-right: 100px;
+
 }
 .modal-title {
   margin-right: 20px;

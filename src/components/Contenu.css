@@ -1,14 +1,30 @@
 #alignement {
-    margin-top: 0px !important;
-  }
-#alignRow {
-  margin-right: -270px;
-  min-width: 50%;
+  margin-top: 0px !important;
 
+}
+#alignRow {
+  margin-right: -265px;
+  min-width: 50%;
+  height: auto;
 }
 #map{
   z-index:0;
+  width:100%;
+  height:auto;
+  margin: 0;
+  padding:0;
+  padding-left: 2.25rem !important;
 }
 #restaurantCard{
   z-index:3;
+  margin-left: -0.75rem !important;
+}
+.form-check-inline .form-check-input {
+  margin-left:8px !important;
+}
+.mt-5[data-v-6b88239d], .my-5[data-v-6b88239d] {
+  margin-top: 0rem !important;
+}
+#cardGlobal{
+  position: relative
 }

@@ -32,20 +32,19 @@ export default {
 @import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css';
 
 #alignement{
-     display: flex;
-      margin-top: -35px;
+  display: flex;
+  margin-top: -35px;
 }
 #logo{
   width:330px;
   text-align: left !important;
   margin: 12px;
+  margin-left:-10px;
   margin-bottom: 40px;
 }
  #googleMap {
-    width: 100%;
-    height: 1000px;
-    background-color: white;
-     margin:2%;
+  width: 100%;
+  height: 1000px;
+  background-color: white;
 }
-
 </style>
