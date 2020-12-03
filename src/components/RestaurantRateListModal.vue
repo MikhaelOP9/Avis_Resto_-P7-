@@ -104,7 +104,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .modal {
   display: block !important;
 }

@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="alignFilter mt-2">
     <filterRateSelector
-      label="Note minimale"
+      label="Note mini"
       :min="0"
       :max="5"
       :step="1"
@@ -9,7 +9,7 @@
       @rate-selected="updateMinRate"
     />
     <filterRateSelector
-      label="Note maximale"
+      label="Note maxi"
       :min="0"
       :max="5"
       :step="1"
@@ -42,4 +42,7 @@ export default {
   },
 };
 </script>
-<style></style>
+<style scoped>
+.alignFilter{
+  display: flex;
+}</style>

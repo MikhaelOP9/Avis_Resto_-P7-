@@ -3,10 +3,16 @@
     id="cardGlobal"
     class="container-fluid card row"
   >
-    <filtre-resto
-      @filter-min-rate="setMinRate"
-      @filter-max-rate="setMaxRate"
-    />
+    <div id="alignNavbar">
+      <filtre-resto
+        @filter-min-rate="setMinRate"
+        @filter-max-rate="setMaxRate"
+      />
+      <search-places
+        id="searchPlaces"
+        @updatedSearchZone="updateSearchZone"
+      />
+    </div>
     <restaurantRateListModal
       v-if="modalInformations_display"
       :name="modalInformations_name"
@@ -30,7 +36,7 @@
           :key="restaurant.place_id"
           :restaurant="restaurant"
           :index="index"
-          class="container col-7"
+          class="container col-md-7"
           @open-rates="openRestaurantRateListModal"
           @laisser-avis="openRestaurantSendRateModal"
         />
@@ -45,8 +51,11 @@
       />
       <mapComponent
         id="map"
-        class="container col-sm-12 col-md-12 col-lg-12 col-xl-12"
-        @fetchedRestaurant="updateRestaurant"
+        class="container col-12"
+        :restaurants="filteredRestaurants"
+        :position="userPos"
+        @saveNewResto="createNewRestaurant"
+        @open-rates="openRestaurantRateListModal"
       />
     </div>
   </div>
@@ -57,6 +66,8 @@ import restaurantRateListModal from './RestaurantRateListModal.vue';
 import mapComponent from './GoogleMap.vue';
 import restaurantCard from './RestaurantCard.vue';
 import filtreResto from './FiltreResto.vue';
+import googleMapsInit from '../utils/GoogleMaps';
+import searchPlaces from './SearchPlaces.vue';
 
 export default {
   name: 'Contenu',
@@ -66,6 +77,7 @@ export default {
     restaurantRateListModal,
     restaurantSendRateModal,
     filtreResto,
+    searchPlaces,
   },
   data() {
     return {
@@ -83,6 +95,16 @@ export default {
       revele: false,
       filterMinRate: 0,
       filterMaxRate: 5,
+      google: null,
+      places: null,
+      pos: {
+        lat: 0,
+        lng: 0,
+      },
+      userPos: {
+        lat: 0,
+        lng: 0,
+      },
     };
   },
   computed: {
@@ -107,7 +129,98 @@ export default {
       });
     },
   },
+  watch: {
+    userPos: {
+      handler() {
+        this.pos = this.userPos;
+      },
+    },
+    pos: {
+      handler(newVal, oldVal) {
+        const distance = this.calculateDistance(oldVal.lat, oldVal.lng, newVal.lat, newVal.lng);
+        if (distance > 5000) {
+          this.restaurants = [];
+        }
+        this.updateRestaurants();
+      },
+      deep: true,
+    },
+  },
+  async mounted() {
+    this.google = await googleMapsInit();
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.userPos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+      }, () => {
+        this.userPos = {
+          lat: 48.866667,
+          lng: 2.333333,
+        };
+      });
+    } else {
+      this.userPos = {
+        lat: 48.866667,
+        lng: 2.333333,
+      };
+    }
+  },
   methods: {
+    handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      this.infoWindow.setPosition(pos);
+      this.infoWindow.setContent(browserHasGeolocation
+        ? 'Erreur: le service de geolocalisation n\'a pas fonctionné.'
+        : 'Erreur: votre navigateur ne supporte pas la geolocalisation.');
+      this.infoWindow.open(this.map);
+    },
+    getRestaurantDetails(restaurantId) {
+      return new Promise((resolve) => {
+        this.places.getDetails({
+          placeId: restaurantId,
+          // fields: ['rating', 'review'],
+        }, (restaurantDetails) => {
+          resolve(restaurantDetails);
+        });
+      });
+    },
+    delayGetRestaurantDetails() {
+      return new Promise((resolve) => {
+        window.setTimeout(resolve, 1000);
+      });
+    },
+    updateRestaurants() {
+      if (!this.places) {
+        this.places = new this.google.maps.places.PlacesService(document.createElement('div'));
+      }
+      this.places.nearbySearch({
+        location: {
+          lat: this.pos.lat,
+          lng: this.pos.lng,
+        },
+        radius: 250,
+        type: 'restaurant',
+      }, async (data) => {
+        for (let i = 0; i < data.length; i += 1) {
+          const restaurant = data[i];
+          if (JSON.stringify(this.restaurants).indexOf(restaurant.name) === -1) {
+            // eslint-disable-next-line
+            await this.delayGetRestaurantDetails();
+            // eslint-disable-next-line
+            const restaurantDetails = await this.getRestaurantDetails(restaurant.place_id);
+            this.restaurants.push({
+              ...restaurant,
+              ...restaurantDetails,
+            });
+          }
+        }
+      });
+    },
+    createNewRestaurant(data) {
+      this.restaurants.push(data);
+    },
     openRestaurantRateListModal(data) {
       this.modalInformations_name = data.modalInformations_name;
       this.modalInformations_address = data.modalInformations_address;
@@ -135,14 +248,28 @@ export default {
         rating: data.stars,
       });
     },
-    updateRestaurant(data) {
-      this.restaurants.push(data);
-    },
     setMinRate(minRate) {
       this.filterMinRate = minRate;
     },
     setMaxRate(maxRate) {
       this.filterMaxRate = maxRate;
+    },
+    updateSearchZone(position) {
+      this.pos = {
+        lat: position.lat(),
+        lng: position.lng(),
+      };
+      this.userPos = {
+        lat: position.lat(),
+        lng: position.lng(),
+      };
+    },
+    calculateDistance(lat1, lng1, lat2, lng2) {
+      const distance = this.google.maps.geometry.spherical.computeDistanceBetween(
+        new this.google.maps.LatLng(lat1, lng1),
+        new this.google.maps.LatLng(lat2, lng2),
+      );
+      return distance;
     },
   },
 };

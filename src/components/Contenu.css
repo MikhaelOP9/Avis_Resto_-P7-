@@ -25,6 +25,11 @@
 .mt-5[data-v-6b88239d], .my-5[data-v-6b88239d] {
   margin-top: 0rem !important;
 }
-#cardGlobal{
-  position: relative
+
+#alignNavbar {
+  display: flex;
+  float: right !important;
+}
+.searchPlaces{
+  float: right !important;
 }

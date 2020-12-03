@@ -69,11 +69,7 @@ export default {
       });
       return total / count;
     },
-    // filteredRestaurants() {
-    //   return this.restaurants.filter((restaurant) => {
-    //   //filtrer ici en fonction des filtres sélectionnés
-    //   });
-    // },
+
   },
   created() {
     this.name = this.restaurant.name;

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <label for="">{{ label }}</label>
+    <label
+      for=""
+      class="m-1"
+    >{{ label }}</label>
     <select
       id=""
       v-model="selectedValue"
@@ -9,6 +12,7 @@
       <option
         v-for="value in range"
         :key="value"
+        class="m-1"
         :value="value"
         :selected="isSelected(value)"
       >
@@ -70,4 +74,6 @@ export default {
   },
 };
 </script>
-<style></style>
+<style scoped>
+
+</style>
