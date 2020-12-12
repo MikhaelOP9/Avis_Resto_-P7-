@@ -80,6 +80,7 @@ export default {
       center: this.position,
       zoom: 16,
     });
+    this.$emit('map-mounted', this.map);
     this.map.addListener('click', (e) => {
       this.placeMarkerAndPanTo(e.latLng);
     });
@@ -106,8 +107,8 @@ export default {
       // eslint-disable-next-line
       const marker = new this.google.maps.Marker({
         position: {
-          lat: coords.lat(),
-          lng: coords.lng(),
+          lat: (typeof coords.lat === 'function') ? coords.lat() : coords.lat,
+          lng: (typeof coords.lng === 'function') ? coords.lng() : coords.lng,
         },
         map: this.map,
         title: restaurant.name,
@@ -124,8 +125,8 @@ export default {
           modalInformations_address: restaurant.address,
           modalInformations_rates: restaurant.reviews,
           modalInformations_rate: avgRate,
-          modalInformations_lat: restaurant.geometry.location.lat(),
-          modalInformations_lng: restaurant.geometry.location.lng(),
+          modalInformations_lat: (typeof restaurant.geometry.location.lat === 'function') ? restaurant.geometry.location.lat() : restaurant.geometry.location.lat,
+          modalInformations_lng: (typeof restaurant.geometry.location.lng === 'function') ? restaurant.geometry.location.lng() : restaurant.geometry.location.lng,
         });
       });
       this.restauMarkers.push(marker);

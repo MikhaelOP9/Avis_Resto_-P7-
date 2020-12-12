@@ -56,6 +56,7 @@
         :position="userPos"
         @saveNewResto="createNewRestaurant"
         @open-rates="openRestaurantRateListModal"
+        @map-mounted="map = $event"
       />
     </div>
   </div>
@@ -81,6 +82,7 @@ export default {
   },
   data() {
     return {
+      useGooglePlacesAPI: true,
       restaurants: [],
       modalInformations_name: '',
       modalInformations_address: '',
@@ -105,6 +107,9 @@ export default {
         lat: 0,
         lng: 0,
       },
+      requestStopRestaurantFetch: false,
+      restaurantFetch: false,
+      map: null,
     };
   },
   computed: {
@@ -160,21 +165,25 @@ export default {
           lat: 48.866667,
           lng: 2.333333,
         };
+        this.handleLocationError();
       });
     } else {
       this.userPos = {
         lat: 48.866667,
         lng: 2.333333,
       };
+      this.handleLocationError();
     }
   },
   methods: {
-    handleLocationError(browserHasGeolocation, infoWindow, pos) {
-      this.infoWindow.setPosition(pos);
-      this.infoWindow.setContent(browserHasGeolocation
-        ? 'Erreur: le service de geolocalisation n\'a pas fonctionné.'
-        : 'Erreur: votre navigateur ne supporte pas la geolocalisation.');
-      this.infoWindow.open(this.map);
+    handleLocationError() {
+      const infoWindow = new this.google.maps.InfoWindow({
+        content: 'Erreur: le service de geolocalisation n\'a pas fonctionné.',
+      });
+      console.log('userPos', this.userPos);
+      infoWindow.setPosition(this.userPos);
+      infoWindow.setContent('Erreur: le service de geolocalisation n\'a pas fonctionné. Paris a été séléctionné comme position par défaut.');
+      infoWindow.open(this.map);
     },
     getRestaurantDetails(restaurantId) {
       return new Promise((resolve) => {
@@ -192,6 +201,12 @@ export default {
       });
     },
     updateRestaurants() {
+      if (this.useGooglePlacesAPI) {
+        return this.updateRestaurantsWithGooglePlacesAPI();
+      }
+      return this.updateRestaurantsWithJsonFile();
+    },
+    updateRestaurantsWithGooglePlacesAPI() {
       if (!this.places) {
         this.places = new this.google.maps.places.PlacesService(document.createElement('div'));
       }
@@ -203,20 +218,38 @@ export default {
         radius: 250,
         type: 'restaurant',
       }, async (data) => {
+        if (this.restaurantFetch) {
+          this.requestStopRestaurantFetch = true;
+          await this.delayGetRestaurantDetails();
+        }
+        this.restaurantFetch = true;
         for (let i = 0; i < data.length; i += 1) {
+          if (this.requestStopRestaurantFetch) {
+            this.requestStopRestaurantFetch = false;
+            return;
+          }
           const restaurant = data[i];
           if (JSON.stringify(this.restaurants).indexOf(restaurant.name) === -1) {
-            // eslint-disable-next-line
-            await this.delayGetRestaurantDetails();
             // eslint-disable-next-line
             const restaurantDetails = await this.getRestaurantDetails(restaurant.place_id);
             this.restaurants.push({
               ...restaurant,
               ...restaurantDetails,
             });
+            // eslint-disable-next-line
+            await this.delayGetRestaurantDetails();
           }
         }
+        this.restaurantFetch = false;
+        console.log(JSON.stringify(this.restaurants));
       });
+    },
+    updateRestaurantsWithJsonFile() {
+      // remplir this.restaurants avec les restaurant de data.json
+      fetch('data.json')
+        .then((response) => response.json())
+        // eslint-disable-next-line
+        .then((data) => (this.restaurants = data));
     },
     createNewRestaurant(data) {
       this.restaurants.push(data);

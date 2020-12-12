@@ -9,7 +9,6 @@
         type="text"
         placeholder="Rechercher une ville"
         name="search"
-        @focus="resetAutoComplete"
       >
       <button
         class="btn btn-outline-success my-2 my-sm-0"
@@ -51,23 +50,17 @@ export default {
       if (!this.searchValue) {
         return;
       }
-      const selectedPlace = this.autoComplete.getPlace();
-      if (!selectedPlace) {
+      this.selectedPlace = this.autoComplete.getPlace();
+      if (!this.selectedPlace) {
         // eslint-disable-next-line no-alert
         window.alert(`${this.searchValue} n'a pas été trouvé dans la base de donnée des villes française`);
-        return;
       }
-      const position = selectedPlace.geometry.location;
-      this.$emit('updatedSearchZone', position);
     });
   },
   methods: {
     submitInput() {
-      this.google.maps.event.trigger(this.autoComplete, 'place_changed');
-    },
-    resetAutoComplete() {
-      this.searchValue = '';
-      this.autoComplete.set('place', null);
+      const position = this.selectedPlace.geometry.location;
+      this.$emit('updatedSearchZone', position);
     },
   },
 };
