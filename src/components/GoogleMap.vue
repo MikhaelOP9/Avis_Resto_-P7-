@@ -44,7 +44,6 @@ export default {
   watch: {
     position: {
       handler() {
-        console.log(this.position);
         this.map.setCenter(this.position);
         if (this.userMarker) {
           this.userMarker.setMap(null);

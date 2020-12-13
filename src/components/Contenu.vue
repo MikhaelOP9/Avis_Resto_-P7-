@@ -115,20 +115,12 @@ export default {
   computed: {
     filteredRestaurants() {
       return this.restaurants.filter((restaurant) => {
-      // filtrer ici en fonction des filtres sélectionnés
         const rate = Math.ceil(restaurant.rating);
         const isInMinRange = (rate >= this.filterMinRate);
         const isInMaxRange = (rate <= this.filterMaxRate);
         const isInBound = (isInMinRange && isInMaxRange);
+        // eslint-disable-next-line
         if (isInBound) {
-          // console.log({
-          //   name: restaurant.name,
-          //   initial: restaurant.rating,
-          //   rate,
-          //   isInMinRange,
-          //   isInMaxRange,
-          //   isInBound,
-          // });
         }
         return isInBound;
       });
@@ -180,7 +172,6 @@ export default {
       const infoWindow = new this.google.maps.InfoWindow({
         content: 'Erreur: le service de geolocalisation n\'a pas fonctionné.',
       });
-      console.log('userPos', this.userPos);
       infoWindow.setPosition(this.userPos);
       infoWindow.setContent('Erreur: le service de geolocalisation n\'a pas fonctionné. Paris a été séléctionné comme position par défaut.');
       infoWindow.open(this.map);
@@ -241,11 +232,9 @@ export default {
           }
         }
         this.restaurantFetch = false;
-        console.log(JSON.stringify(this.restaurants));
       });
     },
     updateRestaurantsWithJsonFile() {
-      // remplir this.restaurants avec les restaurant de data.json
       fetch('data.json')
         .then((response) => response.json())
         // eslint-disable-next-line
